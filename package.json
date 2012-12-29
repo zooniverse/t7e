@@ -1,0 +1,18 @@
+{
+  "name": "translate",
+  "version": "0.0.1",
+
+  "main": "./index.js",
+
+  "dependencies": {
+    "coffee-script": "~1.4.0"
+  },
+
+  "devDependencies": {
+    "you-are-a-runner": "~0.0.4"
+  },
+
+  "scripts": {
+    "test": "yaar test/runner.js"
+  }
+}
