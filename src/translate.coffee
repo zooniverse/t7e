@@ -1,6 +1,6 @@
 strings = {}
 
-elements = ['div', 'p', 'li', 'td', 'span', 'a', 'strong', 'em']
+elements = 'div h1 h2 h3 h4 h5 h6 p li td span a strong em'.split ' '
 
 dataSet = (el, key, value) ->
   el.setAttribute "data-#{key.toLowerCase()}", value
