@@ -1,1 +1,1 @@
-module.exports = require('./src/translate');
+module.exports = require('./translate');
