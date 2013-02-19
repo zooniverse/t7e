@@ -82,11 +82,12 @@ load = (newStrings...) ->
   for additions in newStrings
     deepMixin strings, additions
 
-translate.deepMixin = deepMixin
-translate.flatLookup = flatLookup
-translate.replaceValues = replaceValues
-translate.getOuterHTML = getOuterHTML
-translate.refresh = refresh
-translate.load = load
+t7e = translate
+t7e.deepMixin = deepMixin
+t7e.flatLookup = flatLookup
+t7e.replaceValues = replaceValues
+t7e.getOuterHTML = getOuterHTML
+t7e.refresh = refresh
+t7e.load = load
 
-module.exports = translate
+module.exports = t7e
