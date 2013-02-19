@@ -1,4 +1,4 @@
-translate = require '../src/translate'
+translate = require '../t7e'
 {deepMixin, flatLookup, replaceValues, getOuterHTML} = translate
 
 describe 'deepMixin', ->

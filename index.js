@@ -1,1 +1,1 @@
-module.exports = require('./translate');
+module.exports = require('./t7e');

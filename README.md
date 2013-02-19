@@ -1,5 +1,5 @@
 ```coffee
-translate = require 'translate'
+translate = require 't7e'
 translate.load greetings: hello: 'Hello', hey: 'Hey, $name!'
 ```
 
