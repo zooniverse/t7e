@@ -6,7 +6,7 @@
 
   strings = {};
 
-  elements = 'div h1 h2 h3 h4 h5 h6 p li td span a strong em'.split(' ');
+  elements = 'div h1 h2 h3 h4 h5 h6 p li td span a strong b em i'.split(' ');
 
   dataSet = function(el, key, value) {
     return el.setAttribute("data-" + (key.toLowerCase()), value);
@@ -107,14 +107,14 @@
   };
 
   refresh = function(root) {
-    var dataAttr, element, key, options, value, varName, _i, _len, _ref, _results;
+    var dataAttr, element, key, keyedElements, options, value, varName, _i, _len, _ref, _results;
     if (root == null) {
       root = document.body;
     }
-    elements = Array.prototype.slice.call(root.querySelectorAll('[data-translation-key]'));
+    keyedElements = Array.prototype.slice.call(root.querySelectorAll('[data-translation-key]'));
     _results = [];
-    for (_i = 0, _len = elements.length; _i < _len; _i++) {
-      element = elements[_i];
+    for (_i = 0, _len = keyedElements.length; _i < _len; _i++) {
+      element = keyedElements[_i];
       key = dataGet(element, 'translation-key');
       options = {};
       _ref = dataAll(element);
