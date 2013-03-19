@@ -65,9 +65,9 @@ translate = (params...) ->
     getOuterHTML element
 
 refresh = (root = document.body) ->
-  elements = Array::slice.call root.querySelectorAll '[data-translation-key]'
+  keyedElements = Array::slice.call root.querySelectorAll '[data-translation-key]'
 
-  for element in elements
+  for element in keyedElements
     key = dataGet element, 'translation-key'
     options = {}
 
