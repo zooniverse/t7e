@@ -1,10 +1,9 @@
 {
   "name": "t7e",
-  "version": "0.0.2",
-
+  "version": "0.0.3",
   "main": "./index.js",
-
-  "dependencies": {
-    "coffee-script": "~1.4.0"
+  "devDependencies": {
+    "coffee-script": "~1.6.0",
+    "silver-server": "~0.1.0"
   }
 }
