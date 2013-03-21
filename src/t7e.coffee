@@ -24,10 +24,13 @@ deepMixin = (base, mixin) ->
 
   base
 
-flatLookup = (object, key) ->
+lookup = (object, key) ->
   keys = key.split '.'
-  object = object[key] for key in keys
-  object
+
+  for key in keys
+    object = object[key]
+
+  object || key
 
 replaceValues = (string, values) ->
   for key, value of values when (key.charAt 0) is '$'
@@ -35,15 +38,16 @@ replaceValues = (string, values) ->
 
   string
 
+container = document.createElement 'div'
 getOuterHTML = (element) ->
-  container = document.createElement 'div'
+  container.innerHTML = ''
   container.appendChild element
   container.innerHTML
 
 translate = (params...) ->
   if typeof params[0] is 'string'
     [translationKey, values] = params
-    replaceValues (flatLookup strings, translationKey), values
+    replaceValues (lookup strings, translationKey), values
 
   else
     [options] = params
@@ -52,7 +56,7 @@ translate = (params...) ->
     translationKey = options[nodeName]
 
     element = document.createElement nodeName
-    element.innerHTML = replaceValues (flatLookup strings, translationKey), options
+    element.innerHTML = replaceValues (lookup strings, translationKey), options if translationKey
     dataSet element, 'key', translationKey
 
     for property, value of options when property isnt nodeName
@@ -66,6 +70,7 @@ translate = (params...) ->
 
 refresh = (root = document.body) ->
   keyedElements = Array::slice.call root.querySelectorAll '[data-t7e-key]'
+  keyedElements.unshift root if dataGet root, 'key'
 
   for element in keyedElements
     key = dataGet element, 'key'
@@ -83,14 +88,18 @@ refresh = (root = document.body) ->
     element.innerHTML = translate key, options
     element.setAttribute attr, translate value for attr, value of attrs
 
+  null
+
 load = (newStrings...) ->
   for additions in newStrings
     deepMixin strings, additions
 
+  null
+
 t7e = translate
 t7e.strings = strings
 t7e.deepMixin = deepMixin
-t7e.flatLookup = flatLookup
+t7e.lookup = lookup
 t7e.replaceValues = replaceValues
 t7e.getOuterHTML = getOuterHTML
 t7e.refresh = refresh

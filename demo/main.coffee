@@ -7,14 +7,17 @@ LANGUAGES =
     goodbye: 'Goodbye'
     goodbyeTitle: 'See you soon'
     flag: 'http://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/125px-Flag_of_the_United_States.svg.png'
+    flagTitle: 'The Flag of the USA'
+    outLink: 'http://www.google.com/'
 
   'es-mx':
     hello: 'Hola'
     helloFriend: '¡Hola, $friend!'
+    flag: 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/125px-Flag_of_Mexico.svg.png'
+    flagTitle: 'La bandera de México'
     goodbye: 'Adios'
     goodbyeTitle: 'Hasta la vista'
-    flag: 'http://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Flag_of_Mexico.svg/125px-Flag_of_Mexico.svg.png'
-
+    outLink: 'http://www.google.com.mx/'
 
 # Set up the menu.
 
@@ -46,6 +49,9 @@ container.innerHTML += translate div: 'helloFriend', $friend: 'Aaron'
 
 container.innerHTML += translate div: 'goodbye', title: 'goodbyeTitle'
 
-container.innerHTML += translate img: '', src: 'flag'
+container.innerHTML += translate img: '', src: 'flag', title: 'flagTitle'
+container.innerHTML += '<br />'
+
+container.innerHTML += translate a: 'goodbye', href: 'outLink', title: 'Title not translated'
 
 document.body.appendChild container
