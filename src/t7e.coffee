@@ -1,6 +1,6 @@
 strings = {}
 
-elements = 'div h1 h2 h3 h4 h5 h6 p li td span a strong b em i'.split ' '
+elements = 'div h1 h2 h3 h4 h5 h6 p li td img span a strong b em i'.split /\s+/
 
 dataSet = (el, key, value) ->
   el.setAttribute "data-#{key.toLowerCase()}", value
@@ -49,40 +49,46 @@ translate = (params...) ->
     [options] = params
 
     nodeName = name for name in elements when name of options
-    element = document.createElement nodeName
-
-
     translationKey = options[nodeName]
+
+    element = document.createElement nodeName
     element.innerHTML = replaceValues (flatLookup strings, translationKey), options
-    dataSet element, 'translation-key', translationKey
+    dataSet element, 't7e-key', translationKey
 
     for property, value of options when property isnt nodeName
       if property.charAt(0) is '$'
-        dataSet element, "translation-var-#{property[1...]}", value
+        dataSet element, "t7e-var-#{property[1...]}", value
       else
-        element.setAttribute property, value
+        dataSet element, "t7e-attr-#{property}", value
+        element.setAttribute property, translate value
 
     getOuterHTML element
 
 refresh = (root = document.body) ->
-  keyedElements = Array::slice.call root.querySelectorAll '[data-translation-key]'
+  keyedElements = Array::slice.call root.querySelectorAll '[data-t7e-key]'
 
   for element in keyedElements
-    key = dataGet element, 'translation-key'
+    key = dataGet element, 't7e-key'
     options = {}
+    attrs = {}
 
     for dataAttr, value of dataAll element
-      if (dataAttr.indexOf 'translation-var-') is 0
-        varName = dataAttr['translation-var-'.length...]
+      if (dataAttr.indexOf 't7e-var-') is 0
+        varName = dataAttr['t7e-var-'.length...]
         options["$#{varName}"] = value
+      else if (dataAttr.indexOf 't7e-attr-') is 0
+        attrName = dataAttr['t7e-attr-'.length...]
+        attrs[attrName] = value
 
     element.innerHTML = translate key, options
+    element.setAttribute attr, translate value for attr, value of attrs
 
 load = (newStrings...) ->
   for additions in newStrings
     deepMixin strings, additions
 
 t7e = translate
+t7e.strings = strings
 t7e.deepMixin = deepMixin
 t7e.flatLookup = flatLookup
 t7e.replaceValues = replaceValues
@@ -90,4 +96,5 @@ t7e.getOuterHTML = getOuterHTML
 t7e.refresh = refresh
 t7e.load = load
 
-module.exports = t7e
+window?.t7e = t7e
+module?.exports = t7e

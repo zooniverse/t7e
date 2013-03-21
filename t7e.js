@@ -6,7 +6,7 @@
 
   strings = {};
 
-  elements = 'div h1 h2 h3 h4 h5 h6 p li td span a strong b em i'.split(' ');
+  elements = 'div h1 h2 h3 h4 h5 h6 p li td img span a strong b em i'.split(/\s+/);
 
   dataSet = function(el, key, value) {
     return el.setAttribute("data-" + (key.toLowerCase()), value);
@@ -94,17 +94,18 @@
           nodeName = name;
         }
       }
-      element = document.createElement(nodeName);
       translationKey = options[nodeName];
+      element = document.createElement(nodeName);
       element.innerHTML = replaceValues(flatLookup(strings, translationKey), options);
-      dataSet(element, 'translation-key', translationKey);
+      dataSet(element, 't7e-key', translationKey);
       for (property in options) {
         value = options[property];
         if (property !== nodeName) {
           if (property.charAt(0) === '$') {
-            dataSet(element, "translation-var-" + property.slice(1), value);
+            dataSet(element, "t7e-var-" + property.slice(1), value);
           } else {
-            element.setAttribute(property, value);
+            dataSet(element, "t7e-attr-" + property, value);
+            element.setAttribute(property, translate(value));
           }
         }
       }
@@ -113,26 +114,40 @@
   };
 
   refresh = function(root) {
-    var dataAttr, element, key, keyedElements, options, value, varName, _i, _len, _ref, _results;
+    var attr, attrName, attrs, dataAttr, element, key, keyedElements, options, value, varName, _i, _len, _ref, _results;
 
     if (root == null) {
       root = document.body;
     }
-    keyedElements = Array.prototype.slice.call(root.querySelectorAll('[data-translation-key]'));
+    keyedElements = Array.prototype.slice.call(root.querySelectorAll('[data-t7e-key]'));
     _results = [];
     for (_i = 0, _len = keyedElements.length; _i < _len; _i++) {
       element = keyedElements[_i];
-      key = dataGet(element, 'translation-key');
+      key = dataGet(element, 't7e-key');
       options = {};
+      attrs = {};
       _ref = dataAll(element);
       for (dataAttr in _ref) {
         value = _ref[dataAttr];
-        if ((dataAttr.indexOf('translation-var-')) === 0) {
-          varName = dataAttr.slice('translation-var-'.length);
+        if ((dataAttr.indexOf('t7e-var-')) === 0) {
+          varName = dataAttr.slice('t7e-var-'.length);
           options["$" + varName] = value;
+        } else if ((dataAttr.indexOf('t7e-attr-')) === 0) {
+          attrName = dataAttr.slice('t7e-attr-'.length);
+          attrs[attrName] = value;
         }
       }
-      _results.push(element.innerHTML = translate(key, options));
+      element.innerHTML = translate(key, options);
+      _results.push((function() {
+        var _results1;
+
+        _results1 = [];
+        for (attr in attrs) {
+          value = attrs[attr];
+          _results1.push(element.setAttribute(attr, translate(value)));
+        }
+        return _results1;
+      })());
     }
     return _results;
   };
@@ -151,6 +166,8 @@
 
   t7e = translate;
 
+  t7e.strings = strings;
+
   t7e.deepMixin = deepMixin;
 
   t7e.flatLookup = flatLookup;
@@ -163,6 +180,12 @@
 
   t7e.load = load;
 
-  module.exports = t7e;
+  if (typeof window !== "undefined" && window !== null) {
+    window.t7e = t7e;
+  }
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = t7e;
+  }
 
 }).call(this);
