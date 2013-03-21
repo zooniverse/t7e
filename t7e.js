@@ -9,11 +9,11 @@
   elements = 'div h1 h2 h3 h4 h5 h6 p li td img span a strong b em i'.split(/\s+/);
 
   dataSet = function(el, key, value) {
-    return el.setAttribute("data-" + (key.toLowerCase()), value);
+    return el.setAttribute("data-t7e-" + (key.toLowerCase()), value);
   };
 
   dataGet = function(el, key) {
-    return el.getAttribute("data-" + (key.toLowerCase()));
+    return el.getAttribute("data-t7e-" + (key.toLowerCase()));
   };
 
   dataAll = function(el) {
@@ -23,8 +23,8 @@
     _ref = el.attributes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       attr = _ref[_i];
-      if ((attr.name.indexOf('data-')) === 0) {
-        data[attr.name.slice('data-'.length)] = attr.value;
+      if ((attr.name.indexOf('data-t7e-')) === 0) {
+        data[attr.name.slice('data-t7e-'.length)] = attr.value;
       }
     }
     return data;
@@ -97,14 +97,14 @@
       translationKey = options[nodeName];
       element = document.createElement(nodeName);
       element.innerHTML = replaceValues(flatLookup(strings, translationKey), options);
-      dataSet(element, 't7e-key', translationKey);
+      dataSet(element, 'key', translationKey);
       for (property in options) {
         value = options[property];
         if (property !== nodeName) {
           if (property.charAt(0) === '$') {
-            dataSet(element, "t7e-var-" + property.slice(1), value);
+            dataSet(element, "var-" + property.slice(1), value);
           } else {
-            dataSet(element, "t7e-attr-" + property, value);
+            dataSet(element, "attr-" + property, value);
             element.setAttribute(property, translate(value));
           }
         }
@@ -123,17 +123,17 @@
     _results = [];
     for (_i = 0, _len = keyedElements.length; _i < _len; _i++) {
       element = keyedElements[_i];
-      key = dataGet(element, 't7e-key');
+      key = dataGet(element, 'key');
       options = {};
       attrs = {};
       _ref = dataAll(element);
       for (dataAttr in _ref) {
         value = _ref[dataAttr];
-        if ((dataAttr.indexOf('t7e-var-')) === 0) {
-          varName = dataAttr.slice('t7e-var-'.length);
+        if ((dataAttr.indexOf('var-')) === 0) {
+          varName = dataAttr.slice('var-'.length);
           options["$" + varName] = value;
-        } else if ((dataAttr.indexOf('t7e-attr-')) === 0) {
-          attrName = dataAttr.slice('t7e-attr-'.length);
+        } else if ((dataAttr.indexOf('attr-')) === 0) {
+          attrName = dataAttr.slice('attr-'.length);
           attrs[attrName] = value;
         }
       }

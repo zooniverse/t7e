@@ -3,15 +3,15 @@ strings = {}
 elements = 'div h1 h2 h3 h4 h5 h6 p li td img span a strong b em i'.split /\s+/
 
 dataSet = (el, key, value) ->
-  el.setAttribute "data-#{key.toLowerCase()}", value
+  el.setAttribute "data-t7e-#{key.toLowerCase()}", value
 
 dataGet = (el, key) ->
-  el.getAttribute "data-#{key.toLowerCase()}"
+  el.getAttribute "data-t7e-#{key.toLowerCase()}"
 
 dataAll = (el) ->
   data = {}
-  for attr in el.attributes when (attr.name.indexOf 'data-') is 0
-    data[attr.name['data-'.length...]] = attr.value
+  for attr in el.attributes when (attr.name.indexOf 'data-t7e-') is 0
+    data[attr.name['data-t7e-'.length...]] = attr.value
   data
 
 deepMixin = (base, mixin) ->
@@ -53,13 +53,13 @@ translate = (params...) ->
 
     element = document.createElement nodeName
     element.innerHTML = replaceValues (flatLookup strings, translationKey), options
-    dataSet element, 't7e-key', translationKey
+    dataSet element, 'key', translationKey
 
     for property, value of options when property isnt nodeName
       if property.charAt(0) is '$'
-        dataSet element, "t7e-var-#{property[1...]}", value
+        dataSet element, "var-#{property[1...]}", value
       else
-        dataSet element, "t7e-attr-#{property}", value
+        dataSet element, "attr-#{property}", value
         element.setAttribute property, translate value
 
     getOuterHTML element
@@ -68,16 +68,16 @@ refresh = (root = document.body) ->
   keyedElements = Array::slice.call root.querySelectorAll '[data-t7e-key]'
 
   for element in keyedElements
-    key = dataGet element, 't7e-key'
+    key = dataGet element, 'key'
     options = {}
     attrs = {}
 
     for dataAttr, value of dataAll element
-      if (dataAttr.indexOf 't7e-var-') is 0
-        varName = dataAttr['t7e-var-'.length...]
+      if (dataAttr.indexOf 'var-') is 0
+        varName = dataAttr['var-'.length...]
         options["$#{varName}"] = value
-      else if (dataAttr.indexOf 't7e-attr-') is 0
-        attrName = dataAttr['t7e-attr-'.length...]
+      else if (dataAttr.indexOf 'attr-') is 0
+        attrName = dataAttr['attr-'.length...]
         attrs[attrName] = value
 
     element.innerHTML = translate key, options
