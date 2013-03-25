@@ -54,12 +54,14 @@
     segments = key.split('.');
     for (_i = 0, _len = segments.length; _i < _len; _i++) {
       segment = segments[_i];
-      object = object[segment];
+      if (object) {
+        object = object[segment];
+      }
     }
     if (object instanceof Array) {
       object = object.join('\n');
     }
-    return object || segments;
+    return object || key;
   };
 
   replaceValues = function(string, values) {

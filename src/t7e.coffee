@@ -28,10 +28,10 @@ lookup = (object, key) ->
   segments = key.split '.'
 
   for segment in segments
-    object = object[segment]
+    object = object[segment] if object
 
   object = object.join '\n' if object instanceof Array
-  object || segments
+  object || key
 
 replaceValues = (string, values) ->
   for key, value of values when (key.charAt 0) is '$'
