@@ -54,7 +54,7 @@
     segments = key.split('.');
     for (_i = 0, _len = segments.length; _i < _len; _i++) {
       segment = segments[_i];
-      if (object) {
+      if (object != null) {
         object = object[segment];
       }
     }

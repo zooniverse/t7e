@@ -28,7 +28,7 @@ lookup = (object, key) ->
   segments = key.split '.'
 
   for segment in segments
-    object = object[segment] if object
+    object = object[segment] if object?
 
   object = object.join '\n' if object instanceof Array
   object || key
