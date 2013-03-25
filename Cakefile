@@ -7,5 +7,5 @@ exec = (fullCommand) ->
   child.stderr.on 'data', process.stderr.write.bind process.stderr
 
 task 'serve', (options) ->
-  exec 'coffee --watch --output . --compile src/t7e'
+  exec 'coffee --watch --output . --compile src/t7e.coffee'
   exec "silver server --port #{process.env.PORT || 7373}"

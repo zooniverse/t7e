@@ -36,7 +36,7 @@
     for (key in mixin) {
       if (!__hasProp.call(mixin, key)) continue;
       value = mixin[key];
-      if (typeof value === 'string') {
+      if ((typeof value === 'string') || (value instanceof Array)) {
         base[key] = value;
       } else {
         if (!(key in base)) {
@@ -49,14 +49,17 @@
   };
 
   lookup = function(object, key) {
-    var keys, _i, _len;
+    var segment, segments, _i, _len;
 
-    keys = key.split('.');
-    for (_i = 0, _len = keys.length; _i < _len; _i++) {
-      key = keys[_i];
-      object = object[key];
+    segments = key.split('.');
+    for (_i = 0, _len = segments.length; _i < _len; _i++) {
+      segment = segments[_i];
+      object = object[segment];
     }
-    return object || key;
+    if (object instanceof Array) {
+      object = object.join('\n');
+    }
+    return object || segments;
   };
 
   replaceValues = function(string, values) {

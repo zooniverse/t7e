@@ -16,7 +16,7 @@ dataAll = (el) ->
 
 deepMixin = (base, mixin) ->
   for own key, value of mixin
-    if typeof value is 'string'
+    if (typeof value is 'string') or (value instanceof Array)
       base[key] = value
     else
       base[key] = {} unless key of base
@@ -25,12 +25,13 @@ deepMixin = (base, mixin) ->
   base
 
 lookup = (object, key) ->
-  keys = key.split '.'
+  segments = key.split '.'
 
-  for key in keys
-    object = object[key]
+  for segment in segments
+    object = object[segment]
 
-  object || key
+  object = object.join '\n' if object instanceof Array
+  object || segments
 
 replaceValues = (string, values) ->
   for key, value of values when (key.charAt 0) is '$'
