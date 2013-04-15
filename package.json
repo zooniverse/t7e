@@ -4,6 +4,7 @@
   "main": "./index.js",
   "devDependencies": {
     "coffee-script": "~1.6.0",
+    "easy-exec": "~0.0.1",
     "silver-server": "~0.1.0"
   }
 }
