@@ -1,6 +1,6 @@
 translate = window.t7e
 
-LANGUAGES =
+languages =
   'en-us':
     hello: 'Hello'
     helloFriend: 'Hello, $friend!'
@@ -22,14 +22,14 @@ LANGUAGES =
 # Set up the menu.
 
 select = document.createElement 'select'
-for language of LANGUAGES
+for language of languages
   option = document.createElement 'option'
   option.value = language
   option.innerHTML = language.toUpperCase()
   select.appendChild option
 
 onLanguageChange = ->
-  translate.load LANGUAGES[select.value]
+  translate.load languages[select.value]
   translate.refresh()
 
 select.addEventListener 'change', onLanguageChange
@@ -43,15 +43,15 @@ onLanguageChange()
 
 container = document.createElement 'div'
 
-container.innerHTML += translate div: 'hello'
+container.innerHTML += translate 'div.foo', 'hello'
 
-container.innerHTML += translate div: 'helloFriend', $friend: 'Aaron'
+container.innerHTML += translate 'div.foo.bar', 'helloFriend', $friend: 'Aaron'
 
-container.innerHTML += translate div: 'goodbye', title: 'goodbyeTitle'
+container.innerHTML += translate 'div', 'goodbye', title: 'goodbyeTitle'
 
-container.innerHTML += translate img: '', src: 'flag', title: 'flagTitle'
+container.innerHTML += translate 'img', null, src: 'flag', title: 'flagTitle'
 container.innerHTML += '<br />'
 
-container.innerHTML += translate a: 'goodbye', href: 'outLink', title: 'Title not translated'
+container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title not translated'
 
 document.body.appendChild container

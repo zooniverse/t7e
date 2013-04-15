@@ -1,7 +1,5 @@
 strings = {}
 
-elements = 'div h1 h2 h3 h4 h5 h6 p li td img span a strong b em i'.split /\s+/
-
 dataSet = (el, key, value) ->
   el.setAttribute "data-t7e-#{key.toLowerCase()}", value
 
@@ -10,101 +8,106 @@ dataGet = (el, key) ->
 
 dataAll = (el) ->
   data = {}
-  for attr in el.attributes when (attr.name.indexOf 'data-t7e-') is 0
+
+  for attr in el.attributes
+    continue unless (attr.name.indexOf 'data-t7e-') is 0
     data[attr.name['data-t7e-'.length...]] = attr.value
+
   data
 
-deepMixin = (base, mixin) ->
-  for own key, value of mixin
-    if (typeof value is 'string') or (value instanceof Array)
-      base[key] = value
+defaultOptions =
+  raw: false # Return an actual element, not its markup
+  literal: false # Don't interpolate $-variables
+  fallback: null # Or a string
+
+translate = ([tag]..., key, options = {}) ->
+  [tag, key, options] = [arguments..., {}] if typeof options is 'string'
+
+  if tag?
+    [tag, classNames...] = tag.split '.'
+
+    element = document.createElement tag
+    element.classList.add className for className in classNames
+
+    dataSet element, 'key', key || ''
+
+    for property, value of options
+      dataAttribute = if (property.charAt 0) is '$'
+        "var-#{property[1...]}"
+      else if property not of defaultOptions
+        "attr-#{property}"
+      else
+        "opt-#{property}"
+
+      dataSet element, dataAttribute, value
+
+    translate.refresh element
+
+    raw = if options.raw? then options.raw else defaultOptions.raw
+
+    if raw
+      element
     else
-      base[key] = {} unless key of base
-      deepMixin base[key], value
-
-  base
-
-lookup = (object, key) ->
-  segments = key.split '.'
-
-  for segment in segments
-    object = object[segment] if object?
-
-  object = object.join '\n' if object instanceof Array
-  object || key
-
-replaceValues = (string, values) ->
-  for key, value of values when (key.charAt 0) is '$'
-    string = string.replace key, value, 'gi'
-
-  string
-
-container = document.createElement 'div'
-getOuterHTML = (element) ->
-  container.innerHTML = ''
-  container.appendChild element
-  container.innerHTML
-
-translate = (params...) ->
-  if typeof params[0] is 'string'
-    [translationKey, values] = params
-    replaceValues (lookup strings, translationKey), values
+      outer = document.createElement 'div'
+      outer.appendChild element
+      outer.innerHTML
 
   else
-    [options] = params
+    segments = key.split '.'
 
-    nodeName = name for name in elements when name of options
-    translationKey = options[nodeName]
+    object = strings
+    for segment in segments
+      object = object[segment] if object?
 
-    element = document.createElement nodeName
-    element.innerHTML = replaceValues (lookup strings, translationKey), options if translationKey
-    dataSet element, 'key', translationKey
+    object = object.join '\n' if object instanceof Array
+    result = object || options.fallback || key
 
-    for property, value of options when property isnt nodeName
-      if property.charAt(0) is '$'
-        dataSet element, "var-#{property[1...]}", value
-      else
-        dataSet element, "attr-#{property}", value
-        element.setAttribute property, translate value
+    literal = if options.literal? then options.literal else defaultOptions.literal
+    unless literal
+      for variable, value of options when (variable.charAt 0) is '$'
+        result = result.replace variable, value, 'gi'
 
-    getOuterHTML element
+    result
 
-refresh = (root = document.body) ->
+translate.refresh = (root = document.body, givenOptions = {}) ->
   keyedElements = Array::slice.call root.querySelectorAll '[data-t7e-key]'
-  keyedElements.unshift root if dataGet root, 'key'
+  keyedElements.unshift root if (dataGet root, 'key')?
+
+  options = {}
+  options[property] = value for property, value of givenOptions
 
   for element in keyedElements
     key = dataGet element, 'key'
-    options = {}
-    attrs = {}
 
     for dataAttr, value of dataAll element
       if (dataAttr.indexOf 'var-') is 0
         varName = dataAttr['var-'.length...]
         options["$#{varName}"] = value
+
       else if (dataAttr.indexOf 'attr-') is 0
         attrName = dataAttr['attr-'.length...]
-        attrs[attrName] = value
+        options[attrName] = value
+
+      else if (dataAttr.indexOf 'opt-') is 0
+        optName = dataAttr['opt-'.length...]
+        options[optName] = value
 
     element.innerHTML = translate key, options
-    element.setAttribute attr, translate value for attr, value of attrs
+
+    for property, value of options
+      continue if (property.charAt 0) is '$'
+      continue if property of defaultOptions
+      element.setAttribute property, translate value, options
 
   null
 
-load = (newStrings...) ->
-  for additions in newStrings
-    deepMixin strings, additions
+translate.load = (newStringSet, _base = strings) ->
+  for own key, value of newStringSet
+    if (typeof value is 'string') or (value instanceof Array)
+      _base[key] = value
+    else
+      _base[key] = {} unless key of _base
+      translate.load _base[key], value
 
-  null
-
-t7e = translate
-t7e.strings = strings
-t7e.deepMixin = deepMixin
-t7e.lookup = lookup
-t7e.replaceValues = replaceValues
-t7e.getOuterHTML = getOuterHTML
-t7e.refresh = refresh
-t7e.load = load
-
-window?.t7e = t7e
-module?.exports = t7e
+window?.t7e = translate
+module?.exports = translate
