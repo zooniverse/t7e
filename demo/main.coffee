@@ -55,3 +55,5 @@ container.innerHTML += '<br />'
 container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title not translated'
 
 document.body.appendChild container
+
+t7e.editor.init()

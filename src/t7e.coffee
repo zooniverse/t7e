@@ -109,5 +109,7 @@ translate.load = (newStringSet, _base = strings) ->
       _base[key] = {} unless key of _base
       translate.load _base[key], value
 
+translate.strings = strings
+
 window?.t7e = translate
 module?.exports = translate

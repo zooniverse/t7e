@@ -166,6 +166,8 @@
     return _results;
   };
 
+  translate.strings = strings;
+
   if (typeof window !== "undefined" && window !== null) {
     window.t7e = translate;
   }
