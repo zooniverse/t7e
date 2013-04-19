@@ -9,15 +9,13 @@
   t7e.Editor = (function() {
     var selection;
 
-    Editor.prototype.init = function() {
+    Editor.init = function() {
       var editor;
 
       editor = new this;
       document.body.appendChild(editor.controls);
       return editor;
     };
-
-    Editor.prototype.selected = null;
 
     Editor.prototype.template = '<div class="t7e-controls">\n  <span class="t7e-controls-title">T7e</span>\n  <button name="start">Edit</button>\n  <button name="stop">Preview</button>\n  <button name="save">Save</button>\n\n  <div class="t7e-attributes-container"></div>\n</div>';
 
@@ -37,9 +35,12 @@
         creationDiv.innerHTML = _this.template;
         return creationDiv.children[0];
       })();
+      this.startButton = this.controls.querySelector('button[name="start"]');
+      this.stopButton = this.controls.querySelector('button[name="stop"]');
       this.attributesContainer = this.controls.querySelector('.t7e-attributes-container');
       this.controls.addEventListener('click', this.onControlsClick, false);
       this.attributesContainer.addEventListener('keyup', this.onAttributeKeyUp, false);
+      this.stopButton.disabled = true;
     }
 
     Editor.prototype.onControlsClick = function(e) {
@@ -50,6 +51,8 @@
     };
 
     Editor.prototype.start = function() {
+      this.startButton.disabled = true;
+      this.stopButton.disabled = false;
       document.documentElement.classList.add('t7e-edit-mode');
       document.addEventListener('click', this.onDocumentClick, false);
       return t7e.refresh(document.body, {
@@ -65,15 +68,21 @@
         return;
       }
       this.deselect();
-      if (!target.hasAttribute('data-t7e-key')) {
-        return;
+      while (target != null) {
+        if (typeof target.hasAttribute === "function" ? target.hasAttribute('data-t7e-key') : void 0) {
+          break;
+        }
+        target = target.parentNode;
       }
-      this.select(target);
-      return e.preventDefault();
+      if (target != null) {
+        this.select(target);
+        e.preventDefault();
+        return e.stopPropagation();
+      }
     };
 
     Editor.prototype.select = function(element) {
-      var attribute, dataAttrs, key, shortAttribute, _results;
+      var attribute, currentValue, dataAttrs, key, shortAttribute, _results;
 
       this.selection = element;
       element.classList.add('t7e-selected');
@@ -84,13 +93,13 @@
       _results = [];
       for (attribute in dataAttrs) {
         key = dataAttrs[attribute];
-        if ((attribute.indexOf('attr-')) !== 0) {
+        if (!((attribute.indexOf('attr-')) === 0)) {
           continue;
         }
         shortAttribute = attribute.slice('attr-'.length);
-        currentValue(t7e(key, {
+        currentValue = t7e(key, {
           literal: true
-        }));
+        });
         _results.push(this.attributesContainer.innerHTML += "<label>\n  <span class=\"t7e-attribute-label\">" + shortAttribute + "</span>\n  <input type=\"text\" name=\"" + shortAttribute + "\" value=\"" + currentValue + "\" />\n</label>");
       }
       return _results;
@@ -125,8 +134,10 @@
     };
 
     Editor.prototype.stop = function() {
-      var attribute, dataAttrs, element, key, modifiedElements, newStrings, segment, segments, single, value, _i, _j, _len, _len1, _ref, _ref1;
+      var attribute, dataAttrs, element, key, modifiedElements, newStrings, pointer, segment, segments, single, value, _i, _j, _len, _len1, _ref, _ref1;
 
+      this.startButton.disabled = false;
+      this.stopButton.disabled = true;
       document.documentElement.classList.remove('t7e-edit-mode');
       document.removeEventListener('click', this.onDocumentClick, false);
       this.deselect();
@@ -152,15 +163,16 @@
         value = newStrings[key];
         segments = key.split('.');
         single = {};
+        pointer = single;
         _ref = segments.slice(0, -1);
         for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
           segment = _ref[_j];
-          if ((_ref1 = single[segment]) == null) {
-            single[segment] = {};
+          if ((_ref1 = pointer[segment]) == null) {
+            pointer[segment] = {};
           }
-          single = single[segment];
+          pointer = pointer[segment];
         }
-        single[segments.slice(-1)] = value;
+        pointer[segments.slice(-1)] = value;
         t7e.load(single);
       }
       return t7e.refresh();

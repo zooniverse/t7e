@@ -1,12 +1,10 @@
 t7e = window.t7e || require './t7e'
 
 class t7e.Editor
-  init: ->
+  @init: ->
     editor = new @
     document.body.appendChild editor.controls
     editor
-
-  selected: null
 
   template: '''
     <div class="t7e-controls">
@@ -27,17 +25,22 @@ class t7e.Editor
       creationDiv.innerHTML = @template
       creationDiv.children[0]
 
+    @startButton = @controls.querySelector 'button[name="start"]'
+    @stopButton = @controls.querySelector 'button[name="stop"]'
     @attributesContainer = @controls.querySelector '.t7e-attributes-container'
 
     @controls.addEventListener 'click', @onControlsClick, false
-
     @attributesContainer.addEventListener 'keyup', @onAttributeKeyUp, false
+
+    @stopButton.disabled = true
 
   onControlsClick: (e) =>
     target = e.target || e.currentTarget
     @[target.name]? arguments...
 
   start: ->
+    @startButton.disabled = true
+    @stopButton.disabled = false
     document.documentElement.classList.add 't7e-edit-mode'
     document.addEventListener 'click', @onDocumentClick, false
     t7e.refresh document.body, literal: true
@@ -49,11 +52,14 @@ class t7e.Editor
 
     @deselect()
 
-    return unless target.hasAttribute 'data-t7e-key'
+    while target?
+      break if target.hasAttribute? 'data-t7e-key'
+      target = target.parentNode
 
-    @select target
-
-    e.preventDefault()
+    if target?
+      @select target
+      e.preventDefault()
+      e.stopPropagation()
 
   select: (element) ->
     @selection = element
@@ -63,11 +69,9 @@ class t7e.Editor
     element.focus()
 
     dataAttrs = t7e.dataAll element
-    for attribute, key of dataAttrs
-      continue unless (attribute.indexOf 'attr-') is 0
-
+    for attribute, key of dataAttrs when (attribute.indexOf 'attr-') is 0
       shortAttribute = attribute['attr-'.length...]
-      currentValue t7e key, literal: true
+      currentValue = t7e key, literal: true
 
       @attributesContainer.innerHTML += """
         <label>
@@ -93,6 +97,9 @@ class t7e.Editor
     @attributesContainer.innerHTML = ''
 
   stop: ->
+    @startButton.disabled = false
+    @stopButton.disabled = true
+
     document.documentElement.classList.remove 't7e-edit-mode'
     document.removeEventListener 'click', @onDocumentClick, false
     @deselect()
@@ -113,11 +120,12 @@ class t7e.Editor
       segments = key.split '.'
       single = {}
 
+      pointer = single
       for segment in segments[...-1]
-        single[segment] ?= {}
-        single = single[segment]
+        pointer[segment] ?= {}
+        pointer = pointer[segment]
 
-      single[segments[-1...]] = value
+      pointer[segments[-1...]] = value
 
       t7e.load single
 

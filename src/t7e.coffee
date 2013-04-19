@@ -107,7 +107,7 @@ translate.load = (newStringSet, _base = strings) ->
       _base[key] = value
     else
       _base[key] = {} unless key of _base
-      translate.load _base[key], value
+      translate.load value, _base[key]
 
 translate.strings = strings
 translate.dataGet = dataGet

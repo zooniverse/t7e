@@ -160,7 +160,7 @@
         if (!(key in _base)) {
           _base[key] = {};
         }
-        _results.push(translate.load(_base[key], value));
+        _results.push(translate.load(value, _base[key]));
       }
     }
     return _results;
