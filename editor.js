@@ -179,7 +179,7 @@
     };
 
     Editor.prototype.save = function() {
-      return console.log(JSON.stringify(t7e.strings));
+      return open(encodeURI("data:application/json," + (JSON.stringify(t7e.strings))));
     };
 
     Editor.prototype.destroy = function() {

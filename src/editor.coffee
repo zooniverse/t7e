@@ -132,7 +132,7 @@ class t7e.Editor
     t7e.refresh()
 
   save: ->
-    console.log JSON.stringify t7e.strings
+    open encodeURI "data:application/json,#{JSON.stringify t7e.strings}"
 
   destroy: ->
     @stop()
