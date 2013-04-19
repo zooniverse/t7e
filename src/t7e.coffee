@@ -110,6 +110,9 @@ translate.load = (newStringSet, _base = strings) ->
       translate.load _base[key], value
 
 translate.strings = strings
+translate.dataGet = dataGet
+translate.dataSet = dataSet
+translate.dataAll = dataAll
 
 window?.t7e = translate
 module?.exports = translate

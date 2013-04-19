@@ -168,6 +168,12 @@
 
   translate.strings = strings;
 
+  translate.dataGet = dataGet;
+
+  translate.dataSet = dataSet;
+
+  translate.dataAll = dataAll;
+
   if (typeof window !== "undefined" && window !== null) {
     window.t7e = translate;
   }

@@ -56,4 +56,4 @@ container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title 
 
 document.body.appendChild container
 
-t7e.editor.init()
+t7e.Editor.init()
