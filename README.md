@@ -4,14 +4,19 @@ translate.load greetings: hello: 'Hello', hey: 'Hey, $name!'
 ```
 
 ```coffee
-translate span: 'greetings.hello'
-# '<span data-translation-key="greetings.hello">Hello</span>'
+translate 'greetings.hello'
+# 'Hello'
+```
 
-translate span: 'greetings.hey', $name: 'you'
-# '<span data-translation-key="greetings.hey" data-translation-name="you">Hey, you!</span>'
+```coffee
+translate 'span', 'greetings.hello'
+# '<span data-t7e-key="greetings.hello">Hello</span>'
+
+translate 'span', 'greetings.hey', $name: 'you'
+# '<span data-t7e-key="greetings.hey" data-t7e-name="you">Hey, you!</span>'
 ```
 
 ```coffee
 translate.load greetings: hey: '¡Hola, $name!'
-translate.refresh document.body
+translate.refresh()
 ```
