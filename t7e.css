@@ -17,8 +17,9 @@
   font: bold 14px sans-serif;
   padding: 5px;
   position: fixed;
-  left: 10px;
-  top: 10px;
+  left: 50%;
+  top: 3px;
+  transform: translateX(-50%);
   z-index: 101;
 }
 .t7e-controls .t7e-controls-title {
@@ -37,6 +38,7 @@
 }
 .t7e-controls button:disabled {
   opacity: 0.33;
+  pointer-events: none;
 }
 .t7e-controls .t7e-attributes-container label {
   display: block;
