@@ -20,8 +20,6 @@ defaultOptions =
   literal: false # Don't interpolate $-variables
   fallback: null # Or a string
 
-noTransform = (value) -> value
-
 translate = (args...) ->
   # TODO: This is pretty nasty, eh?
   typesOfArgs = (typeof arg for arg in args).join ' '
@@ -83,6 +81,9 @@ translate = (args...) ->
       for variable, value of options when (variable.charAt 0) is '$'
         result = result.replace variable, value, 'gi'
 
+    if transform
+      result = transform result
+
     result
 
 translate.refresh = (root = document.body, givenOptions = {}) ->
@@ -109,9 +110,11 @@ translate.refresh = (root = document.body, givenOptions = {}) ->
         options[optName] = value
 
     transform = eval "(#{dataGet element, 'transform'})"
-    transform ?= noTransform
 
-    element.innerHTML = transform translate key, options
+    element.innerHTML = if transform?
+      translate key, options, transform
+    else
+      translate key, options
 
     for property, value of options
       continue if (property.charAt 0) is '$'
