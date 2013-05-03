@@ -20,8 +20,21 @@ defaultOptions =
   literal: false # Don't interpolate $-variables
   fallback: null # Or a string
 
-translate = ([tag]..., key, options = {}) ->
-  [tag, key, options] = [arguments..., {}] if typeof options is 'string'
+noTransform = (value) -> value
+
+translate = (args...) ->
+  # TODO: This is pretty nasty, eh?
+  typesOfArgs = (typeof arg for arg in args).join ' '
+  [tag, key, options, transform] = switch typesOfArgs
+    when 'string string object function' then args
+    when 'string string object' then [args..., null]
+    when 'string string function' then [args[0], args[1], {}, args[2]]
+    when 'string object function' then [null, args...]
+    when 'string string' then [args..., {}, null]
+    when 'string object' then [null, args..., null]
+    when 'string function' then [null, args[0], {}, args[1]]
+    when 'string' then [null, args..., {}, null]
+    else throw new Error "Couldn't unpack translate args (#{typesOfArgs})"
 
   if tag?
     [tag, classNames...] = tag.split '.'
@@ -29,7 +42,7 @@ translate = ([tag]..., key, options = {}) ->
     element = document.createElement tag
     element.classList.add className for className in classNames
 
-    dataSet element, 'key', key || ''
+    dataSet element, 'key', key
 
     for property, value of options
       dataAttribute = if (property.charAt 0) is '$'
@@ -41,9 +54,12 @@ translate = ([tag]..., key, options = {}) ->
 
       dataSet element, dataAttribute, value
 
+    if transform?
+      dataSet element, 'transform', transform.toString()
+
     translate.refresh element
 
-    raw = if options.raw? then options.raw else defaultOptions.raw
+    raw = if 'raw' of options then options.raw else defaultOptions.raw
 
     if raw
       element
@@ -92,7 +108,10 @@ translate.refresh = (root = document.body, givenOptions = {}) ->
         optName = dataAttr['opt-'.length...]
         options[optName] = value
 
-    element.innerHTML = translate key, options
+    transform = eval "(#{dataGet element, 'transform'})"
+    transform ?= noTransform
+
+    element.innerHTML = transform translate key, options
 
     for property, value of options
       continue if (property.charAt 0) is '$'

@@ -43,13 +43,13 @@ onLanguageChange()
 
 container = document.createElement 'div'
 
-container.innerHTML += translate 'div.foo', 'hello'
+container.innerHTML += translate 'div.foo', 'hello', (val) -> val.toUpperCase()
 
 container.innerHTML += translate 'div.foo.bar', 'helloFriend', $friend: 'Aaron'
 
 container.innerHTML += translate 'div', 'goodbye', title: 'goodbyeTitle'
 
-container.innerHTML += translate 'img', null, src: 'flag', title: 'flagTitle'
+container.innerHTML += translate 'img', '', src: 'flag', title: 'flagTitle'
 container.innerHTML += '<br />'
 
 container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title not translated'
