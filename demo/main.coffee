@@ -38,7 +38,6 @@ document.body.appendChild select
 
 onLanguageChange()
 
-
 # Add some translated content.
 
 container = document.createElement 'div'

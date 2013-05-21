@@ -36,7 +36,7 @@
   };
 
   translate = function() {
-    var arg, args, className, classNames, dataAttribute, element, key, literal, object, options, outer, property, raw, result, segment, segments, tag, transform, typesOfArgs, value, variable, _i, _j, _len, _len1, _ref, _ref1;
+    var arg, args, classNames, dataAttribute, element, key, literal, object, options, outer, property, raw, result, segment, segments, tag, transform, typesOfArgs, value, variable, _i, _len, _ref, _ref1;
 
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     typesOfArgs = ((function() {
@@ -74,10 +74,7 @@
     if (tag != null) {
       _ref1 = tag.split('.'), tag = _ref1[0], classNames = 2 <= _ref1.length ? __slice.call(_ref1, 1) : [];
       element = document.createElement(tag);
-      for (_i = 0, _len = classNames.length; _i < _len; _i++) {
-        className = classNames[_i];
-        element.classList.add(className);
-      }
+      element.className = classNames.join(' ');
       dataSet(element, 'key', key);
       for (property in options) {
         value = options[property];
@@ -99,8 +96,8 @@
     } else {
       segments = key.split('.');
       object = strings;
-      for (_j = 0, _len1 = segments.length; _j < _len1; _j++) {
-        segment = segments[_j];
+      for (_i = 0, _len = segments.length; _i < _len; _i++) {
+        segment = segments[_i];
         if (object != null) {
           object = object[segment];
         }

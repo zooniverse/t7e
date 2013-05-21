@@ -38,7 +38,7 @@ translate = (args...) ->
     [tag, classNames...] = tag.split '.'
 
     element = document.createElement tag
-    element.classList.add className for className in classNames
+    element.className = classNames.join ' '
 
     dataSet element, 'key', key
 
