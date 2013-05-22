@@ -32,7 +32,7 @@ onLanguageChange = ->
   translate.load languages[select.value]
   translate.refresh()
 
-select.addEventListener 'change', onLanguageChange
+select.onchange = onLanguageChange
 
 document.body.appendChild select
 

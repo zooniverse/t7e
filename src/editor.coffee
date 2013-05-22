@@ -29,8 +29,8 @@ class t7e.Editor
     @stopButton = @controls.querySelector 'button[name="stop"]'
     @attributesContainer = @controls.querySelector '.t7e-attributes-container'
 
-    @controls.addEventListener 'click', @onControlsClick, false
-    @attributesContainer.addEventListener 'keyup', @onAttributeKeyUp, false
+    @controls.addEventListener? 'click', @onControlsClick, false
+    @attributesContainer.addEventListener? 'keyup', @onAttributeKeyUp, false
 
     @stopButton.disabled = true
 
@@ -42,7 +42,7 @@ class t7e.Editor
     @startButton.disabled = true
     @stopButton.disabled = false
     document.documentElement.classList.add 't7e-edit-mode'
-    document.addEventListener 'click', @onDocumentClick, false
+    document.addEventListener? 'click', @onDocumentClick, false
     t7e.refresh document.body, literal: true
 
   onDocumentClick: (e) =>
@@ -65,7 +65,7 @@ class t7e.Editor
     @selection = element
     element.classList.add 't7e-selected'
     element.contentEditable = true
-    element.addEventListener 'keyup', @onSelectionKeyUp, false
+    element.addEventListener? 'keyup', @onSelectionKeyUp, false
     element.focus()
 
     dataAttrs = t7e.dataAll element

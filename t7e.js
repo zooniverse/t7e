@@ -131,7 +131,17 @@
     if (givenOptions == null) {
       givenOptions = {};
     }
-    keyedElements = Array.prototype.slice.call(root.querySelectorAll('[data-t7e-key]'));
+    keyedElements = (function() {
+      var _i, _len, _ref, _results;
+
+      _ref = root.querySelectorAll('[data-t7e-key]');
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        element = _ref[_i];
+        _results.push(element);
+      }
+      return _results;
+    })();
     if ((dataGet(root, 'key')) != null) {
       keyedElements.unshift(root);
     }
@@ -158,7 +168,9 @@
         }
       }
       transform = eval("(" + (dataGet(element, 'transform')) + ")");
-      element.innerHTML = transform != null ? translate(key, options, transform) : translate(key, options);
+      try {
+        element.innerHTML = transform != null ? translate(key, options, transform) : translate(key, options);
+      } catch (_error) {}
       for (property in options) {
         value = options[property];
         if ((property.charAt(0)) === '$') {

@@ -87,7 +87,7 @@ translate = (args...) ->
     result
 
 translate.refresh = (root = document.body, givenOptions = {}) ->
-  keyedElements = Array::slice.call root.querySelectorAll '[data-t7e-key]'
+  keyedElements = (element for element in root.querySelectorAll '[data-t7e-key]')
   keyedElements.unshift root if (dataGet root, 'key')?
 
   options = {}
@@ -111,10 +111,11 @@ translate.refresh = (root = document.body, givenOptions = {}) ->
 
     transform = eval "(#{dataGet element, 'transform'})"
 
-    element.innerHTML = if transform?
-      translate key, options, transform
-    else
-      translate key, options
+    try
+      element.innerHTML = if transform?
+        translate key, options, transform
+      else
+        translate key, options
 
     for property, value of options
       continue if (property.charAt 0) is '$'

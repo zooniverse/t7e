@@ -26,7 +26,8 @@
       this.onSelectionKeyUp = __bind(this.onSelectionKeyUp, this);
       this.onDocumentClick = __bind(this.onDocumentClick, this);
       this.onControlsClick = __bind(this.onControlsClick, this);
-      var _this = this;
+      var _base, _base1,
+        _this = this;
 
       this.controls = (function() {
         var creationDiv;
@@ -38,8 +39,12 @@
       this.startButton = this.controls.querySelector('button[name="start"]');
       this.stopButton = this.controls.querySelector('button[name="stop"]');
       this.attributesContainer = this.controls.querySelector('.t7e-attributes-container');
-      this.controls.addEventListener('click', this.onControlsClick, false);
-      this.attributesContainer.addEventListener('keyup', this.onAttributeKeyUp, false);
+      if (typeof (_base = this.controls).addEventListener === "function") {
+        _base.addEventListener('click', this.onControlsClick, false);
+      }
+      if (typeof (_base1 = this.attributesContainer).addEventListener === "function") {
+        _base1.addEventListener('keyup', this.onAttributeKeyUp, false);
+      }
       this.stopButton.disabled = true;
     }
 
@@ -54,7 +59,9 @@
       this.startButton.disabled = true;
       this.stopButton.disabled = false;
       document.documentElement.classList.add('t7e-edit-mode');
-      document.addEventListener('click', this.onDocumentClick, false);
+      if (typeof document.addEventListener === "function") {
+        document.addEventListener('click', this.onDocumentClick, false);
+      }
       return t7e.refresh(document.body, {
         literal: true
       });
@@ -87,7 +94,9 @@
       this.selection = element;
       element.classList.add('t7e-selected');
       element.contentEditable = true;
-      element.addEventListener('keyup', this.onSelectionKeyUp, false);
+      if (typeof element.addEventListener === "function") {
+        element.addEventListener('keyup', this.onSelectionKeyUp, false);
+      }
       element.focus();
       dataAttrs = t7e.dataAll(element);
       _results = [];
