@@ -1,3 +1,9 @@
+T7e
+===
+
+Basic usage
+-----------
+
 ```coffee
 translate = require 't7e'
 translate.load greetings: hello: 'Hello', hey: 'Hey, $name!'
@@ -20,3 +26,19 @@ translate 'span', 'greetings.hey', $name: 'you'
 translate.load greetings: hey: '¡Hola, $name!'
 translate.refresh()
 ```
+
+Language-picker menu
+--------------------
+
+```coffee
+new t7e.Menu
+  languages:
+    'en-US':
+      label: 'U.S. English'
+      value: {}
+    'es-MX':
+      label: 'Español mexicano'
+      value: './es-mx.json'
+```
+
+Language codes should match the codes returned by `navigator.language`.
