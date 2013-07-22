@@ -191,7 +191,7 @@
     };
 
     Editor.prototype.save = function() {
-      return open(encodeURI("data:application/json," + (JSON.stringify(t7e.strings))));
+      return open("data:application/json;charset=utf-8," + (encodeURIComponent(JSON.stringify(t7e.strings))));
     };
 
     Editor.prototype.destroy = function() {

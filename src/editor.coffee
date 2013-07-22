@@ -135,7 +135,7 @@ class t7e.Editor
     t7e.refresh()
 
   save: ->
-    open encodeURI "data:application/json,#{JSON.stringify t7e.strings}"
+    open "data:application/json;charset=utf-8,#{encodeURIComponent JSON.stringify t7e.strings}"
 
   destroy: ->
     @stop()
