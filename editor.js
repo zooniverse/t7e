@@ -38,6 +38,7 @@
       })();
       this.startButton = this.controls.querySelector('button[name="start"]');
       this.stopButton = this.controls.querySelector('button[name="stop"]');
+      this.saveButton = this.controls.querySelector('button[name="save"]');
       this.attributesContainer = this.controls.querySelector('.t7e-attributes-container');
       if (typeof (_base = this.controls).addEventListener === "function") {
         _base.addEventListener('click', this.onControlsClick, false);
@@ -58,6 +59,7 @@
     Editor.prototype.start = function() {
       this.startButton.disabled = true;
       this.stopButton.disabled = false;
+      this.saveButton.disabled = true;
       document.documentElement.classList.add('t7e-edit-mode');
       if (typeof document.addEventListener === "function") {
         document.addEventListener('click', this.onDocumentClick, false);
@@ -147,6 +149,7 @@
 
       this.startButton.disabled = false;
       this.stopButton.disabled = true;
+      this.saveButton.disabled = false;
       document.documentElement.classList.remove('t7e-edit-mode');
       document.removeEventListener('click', this.onDocumentClick, false);
       this.deselect();
@@ -188,7 +191,7 @@
     };
 
     Editor.prototype.save = function() {
-      return open(encodeURI("data:application/json," + (JSON.stringify(t7e.strings))));
+      return open("data:application/json;charset=utf-8," + (encodeURIComponent(JSON.stringify(t7e.strings))));
     };
 
     Editor.prototype.destroy = function() {
