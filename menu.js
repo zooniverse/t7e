@@ -39,7 +39,11 @@
         this.add(language, label, value);
       }
       preferredLanguage = localStorage.getItem('t7e-preferred-language');
-      this.set(preferredLanguage || navigator.language || navigator.userLanguage || this.defaultLanguage);
+      preferredLanguage || (preferredLanguage = navigator.language);
+      preferredLanguage || (preferredLanguage = navigator.userLanguage.replace(/([a-z]+$)/, function(cc) {
+        return cc.toUpperCase();
+      }));
+      this.set(preferredLanguage);
     }
 
     Menu.prototype.add = function(code, label, value, index) {
@@ -67,6 +71,9 @@
       var language,
         _this = this;
 
+      if (!(this.select.value in this.languages)) {
+        this.select.value = this.defaultLanguage;
+      }
       localStorage.setItem('t7e-preferred-language', this.select.value);
       language = this.languages[this.select.value];
       if (typeof language.value === 'string') {

@@ -19,7 +19,10 @@ class t7e.Menu
     @add language, label, value for language, {label, value} of @languages
 
     preferredLanguage = localStorage.getItem 't7e-preferred-language'
-    @set preferredLanguage || navigator.language || navigator.userLanguage || @defaultLanguage
+    preferredLanguage ||= navigator.language
+    preferredLanguage ||= navigator.userLanguage.replace /([a-z]+$)/, (cc) -> cc.toUpperCase()
+
+    @set preferredLanguage
 
   add: (code, label, value, index = NaN) ->
     @languages[code] = {label, value}
@@ -36,6 +39,7 @@ class t7e.Menu
     null
 
   onChange: (e) =>
+    @select.value = @defaultLanguage unless @select.value of @languages
     localStorage.setItem 't7e-preferred-language', @select.value
 
     language = @languages[@select.value]
