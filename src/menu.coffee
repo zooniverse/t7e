@@ -14,7 +14,11 @@ class t7e.Menu
 
     @select ?= document.createElement 'select'
     @select.className = @className
-    @select.addEventListener 'change', @onChange, false
+
+    if 'addEventListener' of @select
+      @select.addEventListener 'change', @onChange, false
+    else if 'attachEvent' of @select
+      @select.attachEvent 'onchange', @onChange
 
     @add language, label, value for language, {label, value} of @languages
 

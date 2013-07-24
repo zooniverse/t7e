@@ -1,6 +1,6 @@
 {
   "name": "t7e",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "./index.js",
   "devDependencies": {
     "coffee-script": "~1.6.0",

@@ -32,7 +32,11 @@
         this.select = document.createElement('select');
       }
       this.select.className = this.className;
-      this.select.addEventListener('change', this.onChange, false);
+      if ('addEventListener' in this.select) {
+        this.select.addEventListener('change', this.onChange, false);
+      } else if ('attachEvent' in this.select) {
+        this.select.attachEvent('onchange', this.onChange);
+      }
       _ref2 = this.languages;
       for (language in _ref2) {
         _ref3 = _ref2[language], label = _ref3.label, value = _ref3.value;
