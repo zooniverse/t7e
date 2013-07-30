@@ -140,13 +140,13 @@
     if ((dataGet(root, 'key')) != null) {
       keyedElements.unshift(root);
     }
-    options = {};
-    for (property in givenOptions) {
-      value = givenOptions[property];
-      options[property] = value;
-    }
     for (_i = 0, _len = keyedElements.length; _i < _len; _i++) {
       element = keyedElements[_i];
+      options = {};
+      for (property in givenOptions) {
+        value = givenOptions[property];
+        options[property] = value;
+      }
       key = dataGet(element, 'key');
       _ref = dataAll(element);
       for (dataAttr in _ref) {

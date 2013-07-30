@@ -90,10 +90,10 @@ translate.refresh = (root = document.body, givenOptions = {}) ->
   keyedElements = (element for element in root.querySelectorAll '[data-t7e-key]')
   keyedElements.unshift root if (dataGet root, 'key')?
 
-  options = {}
-  options[property] = value for property, value of givenOptions
-
   for element in keyedElements
+    options = {}
+    options[property] = value for property, value of givenOptions
+
     key = dataGet element, 'key'
 
     for dataAttr, value of dataAll element
