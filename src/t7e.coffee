@@ -1,3 +1,4 @@
+MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
 strings = {}
 
 dataSet = (el, key, value) ->
@@ -87,6 +88,8 @@ translate = (args...) ->
     result
 
 translate.refresh = (root = document.body, givenOptions = {}) ->
+  return unless root.nodeType is 1
+
   keyedElements = (element for element in root.querySelectorAll '[data-t7e-key]')
   keyedElements.unshift root if (dataGet root, 'key')?
 
@@ -131,6 +134,21 @@ translate.load = (newStringSet, _base = strings) ->
     else
       _base[key] = {} unless key of _base
       translate.load value, _base[key]
+
+translate.observe = ->
+  return unless MutationObserver?
+
+  observer = new MutationObserver (mutations) ->
+    for { addedNodes } in mutations when addedNodes.length
+      translate.refresh addedNodes[i] for i in [0..addedNodes.length - 1]
+
+  observer.observe document.body,
+    childList: true
+    attributes: false
+    characterData: false
+    subtree: true
+
+  translate.observer = observer
 
 translate.strings = strings
 translate.dataGet = dataGet
