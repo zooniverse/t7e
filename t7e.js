@@ -29,7 +29,7 @@
   };
 
   translate = function(tag, key, attrs, transform) {
-    var arg, attribute, classNames, element, outer, result, segment, segments, tagName, typesOfArgs, value, variable, _i, _len, _ref, _ref1;
+    var arg, attribute, classNames, element, result, segment, segments, tagName, typesOfArgs, value, variable, _i, _len, _ref, _ref1;
     typesOfArgs = ((function() {
       var _i, _len, _results;
       _results = [];
@@ -75,9 +75,7 @@
         setData(element, 'transform', transform.toString());
       }
       refresh(element);
-      outer = document.createElement('div');
-      outer.appendChild(element);
-      return outer.innerHTML;
+      return element.outerHTML;
     } else {
       segments = key.split('.');
       result = strings;

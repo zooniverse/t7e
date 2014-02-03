@@ -49,9 +49,7 @@ translate = (tag, key, attrs, transform) ->
 
     refresh element
 
-    outer = document.createElement 'div'
-    outer.appendChild element
-    outer.innerHTML
+    element.outerHTML
 
   else
     segments = key.split '.'
