@@ -61,7 +61,7 @@
         document.addEventListener('click', this.onDocumentClick, false);
       }
       return t7e.refresh(document.body, {
-        literal: true
+        _literal: true
       });
     };
 
@@ -94,7 +94,7 @@
         element.addEventListener('keyup', this.onSelectionKeyUp, false);
       }
       element.focus();
-      dataAttrs = t7e.dataAll(element);
+      dataAttrs = t7e.getAllData(element);
       _results = [];
       for (attribute in dataAttrs) {
         key = dataAttrs[attribute];
@@ -103,7 +103,7 @@
         }
         shortAttribute = attribute.slice('attr-'.length);
         currentValue = t7e(key, {
-          literal: true
+          _literal: true
         });
         _results.push(this.attributesContainer.innerHTML += "<label>\n  <span class=\"t7e-attribute-label\">" + shortAttribute + "</span>\n  <input type=\"text\" name=\"" + shortAttribute + "\" value=\"" + currentValue + "\" />\n</label>");
       }
@@ -111,14 +111,14 @@
     };
 
     Editor.prototype.onSelectionKeyUp = function() {
-      return t7e.dataSet(this.selection, 'modified', true);
+      return t7e.setData(this.selection, 'modified', true);
     };
 
     Editor.prototype.onAttributeKeyUp = function(e) {
       var target;
       target = e.target || e.currentTarget;
       this.selection.setAttribute(target.name, target.value);
-      return t7e.dataSet(this.selection, 'modified', true);
+      return t7e.setData(this.selection, 'modified', true);
     };
 
     Editor.prototype.deselect = function() {
@@ -148,11 +148,11 @@
       newStrings = {};
       for (_i = 0, _len = modifiedElements.length; _i < _len; _i++) {
         element = modifiedElements[_i];
-        key = t7e.dataGet(element, 'key');
+        key = t7e.getData(element, 'key');
         if (key) {
           newStrings[key] = element.innerHTML;
         }
-        dataAttrs = t7e.dataAll(element);
+        dataAttrs = t7e.getAllData(element);
         for (attribute in dataAttrs) {
           key = dataAttrs[attribute];
           if (!((attribute.indexOf('attr-')) === 0)) {

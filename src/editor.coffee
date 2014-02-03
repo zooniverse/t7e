@@ -45,7 +45,7 @@ class t7e.Editor
     @saveButton.disabled = true
     document.documentElement.classList.add 't7e-edit-mode'
     document.addEventListener? 'click', @onDocumentClick, false
-    t7e.refresh document.body, literal: true
+    t7e.refresh document.body, _literal: true
 
   onDocumentClick: (e) =>
     target = e.target || e.currentTarget
@@ -70,10 +70,10 @@ class t7e.Editor
     element.addEventListener? 'keyup', @onSelectionKeyUp, false
     element.focus()
 
-    dataAttrs = t7e.dataAll element
+    dataAttrs = t7e.getAllData element
     for attribute, key of dataAttrs when (attribute.indexOf 'attr-') is 0
       shortAttribute = attribute['attr-'.length...]
-      currentValue = t7e key, literal: true
+      currentValue = t7e key, _literal: true
 
       @attributesContainer.innerHTML += """
         <label>
@@ -83,12 +83,12 @@ class t7e.Editor
       """
 
   onSelectionKeyUp: =>
-    t7e.dataSet @selection, 'modified', true
+    t7e.setData @selection, 'modified', true
 
   onAttributeKeyUp: (e) =>
     target = e.target || e.currentTarget
     @selection.setAttribute target.name, target.value
-    t7e.dataSet @selection, 'modified', true
+    t7e.setData @selection, 'modified', true
 
   deselect: ->
     @selection?.classList.remove 't7e-selected'
@@ -111,10 +111,10 @@ class t7e.Editor
     newStrings = {}
 
     for element in modifiedElements
-      key = t7e.dataGet element, 'key'
+      key = t7e.getData element, 'key'
       newStrings[key] = element.innerHTML if key
 
-      dataAttrs = t7e.dataAll element
+      dataAttrs = t7e.getAllData element
       for attribute, key of dataAttrs when (attribute.indexOf 'attr-') is 0
         attribute = attribute['attr-'.length...]
         newStrings[key] = element.getAttribute attribute

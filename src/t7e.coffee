@@ -1,12 +1,12 @@
 strings = {}
 
-dataSet = (el, key, value) ->
+setData = (el, key, value) ->
   el.setAttribute "data-t7e-#{key.toLowerCase()}", value
 
-dataGet = (el, key) ->
+getData = (el, key) ->
   el.getAttribute "data-t7e-#{key.toLowerCase()}"
 
-dataAll = (el) ->
+getAllData = (el) ->
   data = {}
 
   for attr in el.attributes
@@ -15,127 +15,110 @@ dataAll = (el) ->
 
   data
 
-defaultOptions =
-  raw: false # Return an actual element, not its markup
-  literal: false # Don't interpolate $-variables
-  fallback: null # Or a string
-
-translate = (args...) ->
+translate = (tag, key, attrs, transform) ->
   # TODO: This is pretty nasty, eh?
-  typesOfArgs = (typeof arg for arg in args).join ' '
-  [tag, key, options, transform] = switch typesOfArgs
-    when 'string string object function' then args
-    when 'string string object' then [args..., null]
-    when 'string string function' then [args[0], args[1], {}, args[2]]
-    when 'string object function' then [null, args...]
-    when 'string string' then [args..., {}, null]
-    when 'string object' then [null, args..., null]
-    when 'string function' then [null, args[0], {}, args[1]]
-    when 'string' then [null, args..., {}, null]
-    else throw new Error "Couldn't unpack translate args (#{typesOfArgs})"
+  typesOfArgs = (typeof arg for arg in arguments).join ' '
+  [tag, key, attrs, transform] = switch typesOfArgs
+    when 'string string object function' then arguments
+    when 'string string object' then [arguments..., null]
+    when 'string string function' then [arguments[0], arguments[1], {}, arguments[2]]
+    when 'string object function' then [null, arguments...]
+    when 'string string' then [arguments..., {}, null]
+    when 'string object' then [null, arguments..., null]
+    when 'string function' then [null, arguments[0], {}, arguments[1]]
+    when 'string' then [null, arguments..., {}, null]
+    else throw new Error "Couldn't unpack translate arguments (#{typesOfArgs})"
 
   if tag?
-    [tag, classNames...] = tag.split '.'
-
-    element = document.createElement tag
+    [tagName, classNames...] = tag.split '.'
+    element = document.createElement tagName
     element.className = classNames.join ' '
 
-    dataSet element, 'key', key
+    setData element, 'key', key
 
-    for property, value of options
-      dataAttribute = if (property.charAt 0) is '$'
-        "var-#{property[1...]}"
-      else if property not of defaultOptions
-        "attr-#{property}"
+    for attribute, value of attrs
+      attribute = if (attribute.charAt 0) is '$'
+        "var-#{attribute[1...]}"
       else
-        "opt-#{property}"
+        "attr-#{attribute}"
 
-      dataSet element, dataAttribute, value
+      setData element, attribute, value
 
     if transform?
-      dataSet element, 'transform', transform.toString()
+      setData element, 'transform', transform.toString()
 
-    translate.refresh element
+    refresh element
 
-    raw = if 'raw' of options then options.raw else defaultOptions.raw
-
-    if raw
-      element
-    else
-      outer = document.createElement 'div'
-      outer.appendChild element
-      outer.innerHTML
+    outer = document.createElement 'div'
+    outer.appendChild element
+    outer.innerHTML
 
   else
     segments = key.split '.'
 
-    object = strings
+    result = strings
     for segment in segments
-      object = object[segment] if object?
+      result = result[segment] if result?
 
-    object = object.join '\n' if object instanceof Array
-    result = object || options.fallback || key
-
-    literal = if options.literal? then options.literal else defaultOptions.literal
-    unless literal
-      for variable, value of options when (variable.charAt 0) is '$'
-        result = result.replace variable, value, 'gi'
+    unless attrs._literal
+      for variable, value of attrs when variable.charAt(0) is '$'
+        result = result.replace variable, translate(value), 'gi'
 
     if transform
       result = transform result
 
+    result ?= key
+
     result
 
-translate.refresh = (root = document.body, givenOptions = {}) ->
+refresh = (root = document.body, options = {}) ->
   keyedElements = (element for element in root.querySelectorAll '[data-t7e-key]')
-  keyedElements.unshift root if (dataGet root, 'key')?
+  keyedElements.unshift root if getData(root, 'key')?
 
   for element in keyedElements
-    options = {}
-    options[property] = value for property, value of givenOptions
+    attrs = {}
+    attrs[property] = value for property, value of options
 
-    key = dataGet element, 'key'
-
-    for dataAttr, value of dataAll element
-      if (dataAttr.indexOf 'var-') is 0
+    for dataAttr, value of getAllData element
+      if dataAttr.indexOf('var-') is 0
         varName = dataAttr['var-'.length...]
-        options["$#{varName}"] = value
+        attrs["$#{varName}"] = value
 
-      else if (dataAttr.indexOf 'attr-') is 0
+      else if dataAttr.indexOf('attr-') is 0
         attrName = dataAttr['attr-'.length...]
-        options[attrName] = value
+        attrs[attrName] = value
 
-      else if (dataAttr.indexOf 'opt-') is 0
+      else if dataAttr.indexOf('opt-') is 0
         optName = dataAttr['opt-'.length...]
-        options[optName] = value
+        attrs[optName] = value
 
-    transform = eval "(#{dataGet element, 'transform'})"
+    key = getData element, 'key'
+    transform = eval "(#{getData element, 'transform'})"
 
-    try
+    if key?
       element.innerHTML = if transform?
-        translate key, options, transform
+        translate key, attrs, transform
       else
-        translate key, options
+        translate key, attrs
 
-    for property, value of options
+    for property, value of attrs when property.charAt(0) isnt '_'
       continue if (property.charAt 0) is '$'
-      continue if property of defaultOptions
-      element.setAttribute property, translate value, options
+      element.setAttribute property, translate value, attrs
 
-  null
-
-translate.load = (newStringSet, _base = strings) ->
+load = (newStringSet, _base = strings) ->
   for own key, value of newStringSet
     if (typeof value is 'string') or (value instanceof Array)
       _base[key] = value
     else
       _base[key] = {} unless key of _base
-      translate.load value, _base[key]
+      load value, _base[key]
 
 translate.strings = strings
-translate.dataGet = dataGet
-translate.dataSet = dataSet
-translate.dataAll = dataAll
+translate.refresh = refresh
+translate.load = load
+translate.getData = getData
+translate.setData = setData
+translate.getAllData = getAllData
 
-window?.t7e = translate
+window.t7e = translate
 module?.exports = translate

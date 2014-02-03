@@ -14,6 +14,9 @@ window.menu = new t7e.Menu
         flag: 'http://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/125px-Flag_of_the_United_States.svg.png'
         flagTitle: 'The Flag of the USA'
         outLink: 'http://www.google.com/'
+        translateVariables: '$greeting, $person!'
+        translatedGreeting: 'Hello'
+        translatedPerson: 'World'
 
     'es-MX':
       label: 'Español mexicano'
@@ -31,6 +34,7 @@ container.innerHTML += translate 'div', 'goodbye', title: 'goodbyeTitle'
 container.innerHTML += translate 'img', '', src: 'flag', title: 'flagTitle'
 container.innerHTML += '<br />'
 container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title not translated'
+container.innerHTML += translate 'p', 'translateVariables', $greeting: 'translatedGreeting', $person: 'translatedPerson'
 
 document.body.appendChild container
 
