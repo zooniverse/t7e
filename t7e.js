@@ -150,7 +150,7 @@
       }
       key = getData(element, 'key');
       transform = eval("(" + (getData(element, 'transform')) + ")");
-      if (key != null) {
+      if (key) {
         element.innerHTML = transform != null ? translate(key, attrs, transform) : translate(key, attrs);
       }
       _results.push((function() {

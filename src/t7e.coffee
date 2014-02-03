@@ -95,7 +95,7 @@ refresh = (root = document.body, options = {}) ->
     key = getData element, 'key'
     transform = eval "(#{getData element, 'transform'})"
 
-    if key?
+    if key
       element.innerHTML = if transform?
         translate key, attrs, transform
       else
