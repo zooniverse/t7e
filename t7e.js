@@ -87,6 +87,9 @@
           result = result[segment];
         }
       }
+      if (result == null) {
+        result = key;
+      }
       if (!attrs._literal) {
         for (variable in attrs) {
           value = attrs[variable];
@@ -97,9 +100,6 @@
       }
       if (transform) {
         result = transform(result);
-      }
-      if (result == null) {
-        result = key;
       }
       return result;
     }

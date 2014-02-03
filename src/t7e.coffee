@@ -60,14 +60,14 @@ translate = (tag, key, attrs, transform) ->
     for segment in segments
       result = result[segment] if result?
 
+    result ?= key
+
     unless attrs._literal
       for variable, value of attrs when variable.charAt(0) is '$'
         result = result.replace variable, translate(value), 'gi'
 
     if transform
       result = transform result
-
-    result ?= key
 
     result
 
