@@ -17,6 +17,7 @@ window.menu = new t7e.Menu
         translateVariables: '$greeting, $person!'
         translatedGreeting: 'Hello'
         translatedPerson: 'World'
+        alertButton: '<button type="button" onclick="alert(&quot;Script injected!&quot;)">Alert</button>'
 
     'es-MX':
       label: 'Español mexicano'
@@ -35,6 +36,7 @@ container.innerHTML += translate 'img', '', src: 'flag', title: 'flagTitle'
 container.innerHTML += '<br />'
 container.innerHTML += translate 'a', 'goodbye', href: 'outLink', title: 'Title not translated'
 container.innerHTML += translate 'p', 'translateVariables', $greeting: 'translatedGreeting', $person: 'translatedPerson'
+container.innerHTML += translate 'p', 'alertButton'
 
 document.body.appendChild container
 
