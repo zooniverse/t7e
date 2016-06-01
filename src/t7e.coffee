@@ -1,5 +1,7 @@
 strings = {}
 
+DOMPurify = window.DOMPurify || require('dompurify')(window)
+
 setData = (el, key, value) ->
   el.setAttribute "data-t7e-#{key.toLowerCase()}", value
 
@@ -67,7 +69,7 @@ translate = (tag, key, attrs, transform) ->
     if transform
       result = transform result
 
-    result
+    DOMPurify.sanitize result
 
 refresh = (root = document.body, options = {}) ->
   keyedElements = (element for element in root.querySelectorAll '[data-t7e-key]')
